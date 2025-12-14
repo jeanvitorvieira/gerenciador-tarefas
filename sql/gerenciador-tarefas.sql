@@ -1,19 +1,27 @@
-create database gerenciador_tarefas;
+drop table if exists tarefa;
+drop table if exists usuario;
 
-create table usuario(
-	id varchar(36) not null primary key,
-	nome varchar(150) not null,
-	email varchar(100) unique not null,
-	senha varchar(255) not null
-)
+create database if not exists `gerenciador_tarefas`;
 
-create table tarefa(
-	id varchar(36) not null primary key,
-	titulo varchar(150) not null,
-	descricao varchar(255),
-	status ENUM('Pendente', 'Concluída') not null,
-	data_criacao timestamp default current_timestamp,
-	data_limite datetime not null,
-	id_usuario varchar(36) not null,
-	foreign key (id_usuario) references usuario(id)
+create table usuario
+(
+    id binary(16) not null primary key,
+    nome varchar(150) not null,
+    email varchar(100) not null,
+    senha varchar(255) not null,
+    constraint email unique (email)
 );
+
+create table tarefa
+(
+    id binary(16) not null primary key,
+    titulo varchar(150) not null,
+    descricao varchar(255) null,
+    status enum('Pendente', 'Concluída') not null,
+    data_criacao timestamp default current_timestamp() null,
+    data_limite datetime not null,
+    id_usuario binary(16) not null,
+    constraint `fk_tarefa_usuario` foreign key (id_usuario) references usuario (id)
+);
+
+create index id_usuario on tarefa (id_usuario);
